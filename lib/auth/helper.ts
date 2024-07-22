@@ -11,3 +11,13 @@ export const currentRole = async () => {
 
   return session?.user.role;
 };
+
+export const isAuth = async () => {
+  const session = await auth();
+
+  if (session?.user) {
+    return true;
+  }
+
+  return false;
+};

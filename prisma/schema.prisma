@@ -26,6 +26,7 @@ model User {
   accounts              Account[]
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  AccountsBank          AccountBank?
 }
 
 model Account {
@@ -76,6 +77,17 @@ model TwoFactorToken {
 
 model TwoFactorConfirmation {
   id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+}
+
+model AccountBank {
+  id      String  @id @default(cuid())
+  name    String
+  plaidId String?
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
