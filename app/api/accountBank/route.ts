@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { currentUser, isAuth } from "@/lib/auth/helper";
 import { db } from "@/lib/db";
+import { CreateAccountBankSchema } from "@/schemas/accountBank";
 
 export const GET = async () => {
   const user = await currentUser();
@@ -28,8 +29,18 @@ export const GET = async () => {
 };
 
 export const POST = async (req: Request) => {
-  const user = await currentUser();
-  const body = await req.json();
+  const reqBody = await req.json();
+
+  const validationBody = CreateAccountBankSchema.safeParse(reqBody);
+
+  if (!validationBody.success) {
+    return NextResponse.json(
+      { message: "Invalid request data", errors: validationBody.error.errors },
+      { status: 400 }
+    );
+  }
+
+  const { name, userId } = validationBody.data;
 
   if (!isAuth()) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -38,12 +49,14 @@ export const POST = async (req: Request) => {
   try {
     const account = await db.accountBank.create({
       data: {
-        ...body,
+        name,
+        userId,
       },
     });
 
     return NextResponse.json(account);
   } catch (error) {
+    console.log(error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };

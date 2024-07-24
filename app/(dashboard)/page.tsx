@@ -1,21 +1,18 @@
 "use client";
 
-import { AccountBank } from "@prisma/client";
-
-import useGetAccountsBank from "@/features/accountBank/api/use-get-accounts";
+import { Button } from "@/components/ui/button";
+import { useNewAccount } from "@/features/accountBank/hooks/use-new-account";
 
 const DashboardPage = () => {
-  const { data: accountsBank, isLoading } = useGetAccountsBank();
+  const { onOpen } = useNewAccount();
+  // const { data: accounts, isLoading } = useGetAccounts();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
+  // if (isLoading) return <div>Loading...</div>;
   return (
     <div>
-      {accountsBank?.map((accountBank: AccountBank) => (
-        <div key={accountBank.id}>{accountBank.name}</div>
-      ))}
+      <Button variant="outline" color="primary" onClick={onOpen}>
+        New account
+      </Button>
     </div>
   );
 };

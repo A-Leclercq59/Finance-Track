@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "@/providers/query-provider";
+import { SheetProvider } from "@/providers/sheet-provider";
 
 import "./globals.css";
 
@@ -26,8 +27,11 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={inter.className}>
-          <Toaster />
-          <Providers>{children}</Providers>
+          <Providers>
+            <SheetProvider />
+            <Toaster />
+            {children}
+          </Providers>
         </body>
       </html>
     </SessionProvider>
