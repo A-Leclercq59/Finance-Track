@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 
-import { UserButton } from "@/components/auth/user-button";
 import { Header } from "@/components/header/header";
 import { currentUser } from "@/lib/auth/helper";
 
@@ -16,10 +15,7 @@ const DashboardLayout = async ({ children }: Props) => {
   return (
     <>
       <Header />
-      <main className="px-3 lg:px-14">
-        {children}
-        <UserButton />
-      </main>
+      <main className="px-3 lg:px-14">{children}</main>
     </>
   );
 };
