@@ -30,6 +30,7 @@ export const GET = async () => {
 
 export const POST = async (req: Request) => {
   const reqBody = await req.json();
+  const user = await currentUser();
 
   const validationBody = CreateAccountBankSchema.safeParse(reqBody);
 
@@ -40,17 +41,21 @@ export const POST = async (req: Request) => {
     );
   }
 
-  const { name, userId } = validationBody.data;
+  const { name } = validationBody.data;
 
-  if (!isAuth()) {
+  if (!isAuth() || !user) {
     return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  if (!user?.id) {
+    return new NextResponse("User ID not found", { status: 400 });
   }
 
   try {
     const account = await db.accountBank.create({
       data: {
         name,
-        userId,
+        userId: user.id,
       },
     });
 

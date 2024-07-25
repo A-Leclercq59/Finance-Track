@@ -15,12 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { CreateAccountBankSchema } from "@/schemas/accountBank";
 
 export const formSchema = CreateAccountBankSchema.pick({
   name: true,
-  userId: true,
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -40,8 +38,6 @@ export const AccountForm = ({
   onDelete,
   disabled,
 }: Props) => {
-  const user = useCurrentUser();
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,

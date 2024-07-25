@@ -1,10 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { AccountBank } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Actions } from "./actions";
 
 export const columns: ColumnDef<AccountBank[]>[] = [
   {
@@ -41,6 +43,12 @@ export const columns: ColumnDef<AccountBank[]>[] = [
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return <Actions id={row.original.id} />;
     },
   },
 ];
