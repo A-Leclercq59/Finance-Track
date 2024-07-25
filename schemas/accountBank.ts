@@ -6,3 +6,11 @@ export const CreateAccountBankSchema = z.object({
 });
 
 export type CreateAccountSchemaType = z.infer<typeof CreateAccountBankSchema>;
+
+export const DeleteBulkAccountBankSchema = z.object({
+  ids: z.array(z.string()),
+});
+
+export type DeleteBulkAccountBankSchemaType = z.infer<
+  typeof DeleteBulkAccountBankSchema
+>;

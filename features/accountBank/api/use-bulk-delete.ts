@@ -2,22 +2,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import {
-  CreateAccountBankSchema,
-  CreateAccountSchemaType,
+  DeleteBulkAccountBankSchema,
+  DeleteBulkAccountBankSchemaType,
 } from "@/schemas/accountBank";
 
-type RequestType = CreateAccountSchemaType;
+type RequestType = DeleteBulkAccountBankSchemaType;
 
-export const useCreateAccountBank = () => {
+export const useDeleteBulkAccountBank = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (data: RequestType) => {
-      const validation = CreateAccountBankSchema.safeParse(data);
+      const validation = DeleteBulkAccountBankSchema.safeParse(data);
       if (!validation.success) {
         throw new Error("Invalid request data");
       }
 
-      const response = await fetch("/api/accountBank", {
+      const response = await fetch("/api/accountBank/bulk-delete", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,15 +33,15 @@ export const useCreateAccountBank = () => {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["accounts"] });
-      toast.success("Account created");
+      queryClient.invalidateQueries({ queryKey: ["accountsBank"] });
+      toast.success("Accounts deleted");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create account");
+      toast.error(error.message || "Failed to delete accounts");
     },
   });
 
   return mutation;
 };
 
-export default useCreateAccountBank;
+export default useDeleteBulkAccountBank;
