@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useDeleteAccountBank = (id?: string) => {
+const useDeleteTransaction = (id?: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/accountBank/${id}`, {
+      const response = await fetch(`/api/transaction/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -14,23 +14,21 @@ export const useDeleteAccountBank = (id?: string) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to remove account");
+        throw new Error(errorData.message || "Failed to delete transaction");
       }
 
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["accountsBank"] });
-      queryClient.invalidateQueries({ queryKey: ["accountsBank", { id }] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      toast.success("Account deleted");
+      toast.success("Transaction deleted");
     },
-    onError: () => {
-      toast.error("Failed to remove account");
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete transaction");
     },
   });
 
   return mutation;
 };
 
-export default useDeleteAccountBank;
+export default useDeleteTransaction;

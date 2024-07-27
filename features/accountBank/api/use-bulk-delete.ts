@@ -34,6 +34,7 @@ export const useDeleteBulkAccountBank = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accountsBank"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
       toast.success("Accounts deleted");
     },
     onError: (error) => {

@@ -2,22 +2,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import {
-  EditAccountBankSchema,
-  EditAccountBankSchemaType,
-} from "@/schemas/accountBank";
+  EditTransactionSchema,
+  EditTransactionSchemaType,
+} from "@/schemas/transaction";
 
-type RequestType = EditAccountBankSchemaType;
+type RequestType = EditTransactionSchemaType;
 
-export const useEditAccountBank = (id?: string) => {
+export const useEditTransaction = (id?: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (data: RequestType) => {
-      const validation = EditAccountBankSchema.safeParse(data);
+      const validation = EditTransactionSchema.safeParse(data);
       if (!validation.success) {
         throw new Error("Invalid request data");
       }
 
-      const response = await fetch(`/api/accountBank/${id}`, {
+      const response = await fetch(`/api/transaction/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -27,23 +27,22 @@ export const useEditAccountBank = (id?: string) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to edit account");
+        throw new Error(errorData.message || "Failed to edit transaction");
       }
 
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["accountsBank"] });
-      queryClient.invalidateQueries({ queryKey: ["accountsBank", { id }] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      toast.success("Account updated");
+      queryClient.invalidateQueries({ queryKey: ["transactions", { id }] });
+      toast.success("Transaction updated");
     },
     onError: () => {
-      toast.error("Failed to edit account");
+      toast.error("Failed to edit transaction");
     },
   });
 
   return mutation;
 };
 
-export default useEditAccountBank;
+export default useEditTransaction;

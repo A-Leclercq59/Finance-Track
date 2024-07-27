@@ -18,9 +18,6 @@ export const GET = async (
     const transaction = await db.transaction.findFirst({
       where: {
         id: params.transactionId,
-        accountBank: {
-          userId: user?.id,
-        },
       },
       include: {
         accountBank: true,

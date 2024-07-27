@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Actions } from "./actions";
 
-export const columns: ColumnDef<AccountBank[]>[] = [
+export const columns: ColumnDef<AccountBank>[] = [
   {
     id: "select",
     header: ({ table }) => (

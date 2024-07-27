@@ -35,11 +35,9 @@ export const GET = async (req: Request) => {
 
   let dateConditions = {};
   if (from) {
-    const startDate = parseISO(from);
     dateConditions = { ...dateConditions, gte: startDate };
   }
   if (to) {
-    const endDate = parseISO(to);
     dateConditions = { ...dateConditions, lte: endDate };
   }
 
@@ -56,8 +54,16 @@ export const GET = async (req: Request) => {
         date: "desc",
       },
       include: {
-        accountBank: true,
-        categorie: true,
+        accountBank: {
+          select: {
+            name: true,
+          },
+        },
+        categorie: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 

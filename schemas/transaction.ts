@@ -5,12 +5,7 @@ export const CreateTransactionSchema = z.object({
   amount: z.number(),
   payee: z.string(),
   notes: z.string().optional(),
-  date: z
-    .string()
-    .refine((dateStr) => isValid(parseISO(dateStr)), {
-      message: "Invalid date format",
-    })
-    .transform((dateStr) => parseISO(dateStr)),
+  date: z.coerce.date(),
   accountBankId: z.string(),
   categorieId: z.string().optional(),
 });
@@ -27,7 +22,14 @@ export type DeleteBulkTransactionSchemaType = z.infer<
   typeof DeleteBulkTransactionSchema
 >;
 
-export const EditTransactionSchema = CreateTransactionSchema.partial();
+export const EditTransactionSchema = z.object({
+  amount: z.number(),
+  payee: z.string(),
+  notes: z.string().optional(),
+  date: z.coerce.date(),
+  accountBankId: z.string(),
+  categorieId: z.string().optional(),
+});
 
 export type EditTransactionSchemaType = z.infer<typeof EditTransactionSchema>;
 

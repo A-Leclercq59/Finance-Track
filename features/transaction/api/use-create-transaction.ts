@@ -2,23 +2,24 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import {
-  EditAccountBankSchema,
-  EditAccountBankSchemaType,
-} from "@/schemas/accountBank";
+  CreateTransactionSchema,
+  CreateTransactionSchemaType,
+} from "@/schemas/transaction";
 
-type RequestType = EditAccountBankSchemaType;
+type RequestType = CreateTransactionSchemaType;
 
-export const useEditAccountBank = (id?: string) => {
+const useCreateTransaction = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (data: RequestType) => {
-      const validation = EditAccountBankSchema.safeParse(data);
+      const validation = CreateTransactionSchema.safeParse(data);
+
       if (!validation.success) {
         throw new Error("Invalid request data");
       }
 
-      const response = await fetch(`/api/accountBank/${id}`, {
-        method: "PUT",
+      const response = await fetch("/api/transaction", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -27,23 +28,21 @@ export const useEditAccountBank = (id?: string) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to edit account");
+        throw new Error(errorData.message || "Failed to create transaction");
       }
 
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["accountsBank"] });
-      queryClient.invalidateQueries({ queryKey: ["accountsBank", { id }] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      toast.success("Account updated");
+      toast.success("Transaction created");
     },
-    onError: () => {
-      toast.error("Failed to edit account");
+    onError: (error) => {
+      toast.error(error.message || "Failed to create transaction");
     },
   });
 
   return mutation;
 };
 
-export default useEditAccountBank;
+export default useCreateTransaction;
