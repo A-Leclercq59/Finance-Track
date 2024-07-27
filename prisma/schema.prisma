@@ -91,8 +91,9 @@ model AccountBank {
   name    String
   plaidId String?
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Transaction Transaction[]
 }
 
 model Categorie {
@@ -102,4 +103,20 @@ model Categorie {
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transaction Transaction[]
+}
+
+model Transaction {
+  id     String   @id @default(cuid())
+  amount Int
+  payee  String
+  notes  String?
+  date   DateTime
+
+  accountBankId String
+  accountBank   AccountBank @relation(fields: [accountBankId], references: [id], onDelete: Cascade)
+
+  categorieId String?
+  categorie   Categorie? @relation(fields: [categorieId], references: [id], onDelete: SetNull)
 }
