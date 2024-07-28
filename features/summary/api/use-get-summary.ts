@@ -11,7 +11,8 @@ const useGetSummary = () => {
   const query = useQuery({
     queryKey: ["summary"],
     queryFn: async () => {
-      const res = await fetch("/api/summary");
+      const params = new URLSearchParams({ from, to, accountBankId });
+      const res = await fetch(`/api/summary?${params.toString()}`);
 
       if (!res.ok) {
         throw new Error("Failed to fetch transactions");

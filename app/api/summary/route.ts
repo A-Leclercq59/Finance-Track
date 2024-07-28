@@ -50,7 +50,7 @@ export const GET = async (req: Request) => {
     remaining: number | null;
   };
 
-  async function fetchFinancialData() {
+  async function fetchFinancialData(startedDate: Date, endDate: Date) {
     const result = await db.$queryRaw<FinancialDataResult[]>`
       SELECT
         SUM(CASE WHEN t.amount >= 0 THEN t.amount ELSE 0 END) AS income,
@@ -59,7 +59,7 @@ export const GET = async (req: Request) => {
       FROM "Transaction" t
       INNER JOIN "AccountBank" a ON t."accountBankId" = a.id
       WHERE a."userId" = ${userId}
-        AND t.date >= ${startDate}
+        AND t.date >= ${startedDate}
         AND t.date <= ${endDate}
         ${
           accountBankId ? Prisma.sql`AND a.id = ${accountBankId}` : Prisma.empty
@@ -74,8 +74,8 @@ export const GET = async (req: Request) => {
   }
 
   try {
-    const currentPeriod = await fetchFinancialData();
-    const lastPeriod = await fetchFinancialData();
+    const currentPeriod = await fetchFinancialData(startDate, endDate);
+    const lastPeriod = await fetchFinancialData(lastPeriodStart, lastPeriodEnd);
 
     const incomeChange = calculatePercentage(
       currentPeriod.income ?? 0,
@@ -130,8 +130,8 @@ export const GET = async (req: Request) => {
     const activeDays = await db.$queryRaw<ActiveDayResult[]>`
       SELECT
         t.date,
-        SUM(CASE WHEN t.amount >= 0 THEN t.amount ELSE 0 END) AS income,
-        SUM(CASE WHEN t.amount < 0 THEN t.amount ELSE 0 END) AS expenses
+        SUM(CASE WHEN t.amount > 0 THEN t.amount ELSE 0 END) AS income,
+        SUM(CASE WHEN t.amount < 0 THEN ABS(t.amount) ELSE 0 END) AS expenses
       FROM "Transaction" t
       INNER JOIN "AccountBank" a ON t."accountBankId" = a.id
       WHERE a."userId" = ${userId}
