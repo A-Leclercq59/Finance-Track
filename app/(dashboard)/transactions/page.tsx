@@ -1,20 +1,70 @@
 "use client";
 
 import { Loader2, Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSelectAccount } from "@/features/accountBank/hooks/use-select-account";
 import {
+  useBulkCreateTransactions,
   useBulkDeleteTransactions,
   useGetTransactions,
 } from "@/features/transaction/api";
 import { useNewTransaction } from "@/features/transaction/hooks";
+
+import { Transaction } from "@prisma/client";
 import { columns } from "./columns";
+import ImportCard from "./import-card";
+import UploadButton from "./upload-button";
+
+enum VARIANT {
+  LIST = "LIST",
+  IMPORT = "IMPORT",
+}
+
+const INITIAL_IMPORT_RESULTS = {
+  data: [],
+  error: [],
+  meta: {},
+};
 
 const TransactionsPage = () => {
+  const [AccountDialog, confirm] = useSelectAccount();
+  const [variant, setVariant] = useState<VARIANT>(VARIANT.LIST);
+  const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);
+
+  const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
+    setVariant(VARIANT.IMPORT);
+    setImportResults(results);
+  };
+
+  const onCancelUpload = () => {
+    setVariant(VARIANT.LIST);
+    setImportResults(INITIAL_IMPORT_RESULTS);
+  };
+
+  const onSubmitImport = async (values: any) => {
+    const accountBankId = (await confirm()) as string;
+    if (!accountBankId) toast.error("Please select an account to continue!");
+    const data = values.map((transaction: Transaction) => ({
+      ...transaction,
+      accountBankId,
+    }));
+    bulkCreateTransaction.mutate(data, {
+      onSuccess: () => {
+        onCancelUpload();
+        toast.success("Transactions imported successfully");
+      },
+      onError: () => toast.error("Failed to import transactions"),
+    });
+  };
+
   const newTransaction = useNewTransaction();
+  const bulkCreateTransaction = useBulkCreateTransactions();
   const deleteTransaction = useBulkDeleteTransactions();
   const transactionsQuery = useGetTransactions();
   const transactions = transactionsQuery.data || [];
@@ -35,6 +85,20 @@ const TransactionsPage = () => {
         </Card>
       </div>
     );
+
+  if (variant === VARIANT.IMPORT) {
+    return (
+      <>
+        <AccountDialog />
+        <ImportCard
+          data={importResults.data}
+          onCancel={onCancelUpload}
+          onSubmit={onSubmitImport}
+        />
+      </>
+    );
+  }
+
   return (
     <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
       <Card className="border-none drop-shadow-sm">
@@ -42,10 +106,17 @@ const TransactionsPage = () => {
           <CardTitle className="text-xl line-clamp-1">
             Transactions History
           </CardTitle>
-          <Button size={"sm"} onClick={newTransaction.onOpen}>
-            <Plus className="mr-2 size-4" />
-            Add new
-          </Button>
+          <div className="flex flex-col lg:flex-row items-center gap-x-2 gap-y-2">
+            <Button
+              size={"sm"}
+              onClick={newTransaction.onOpen}
+              className="w-full lg:w-auto"
+            >
+              <Plus className="mr-2 size-4" />
+              Add new
+            </Button>
+            <UploadButton onUpload={onUpload} />
+          </div>
         </CardHeader>
         <CardContent>
           <DataTable
