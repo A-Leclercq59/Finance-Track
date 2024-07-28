@@ -36,6 +36,7 @@ export const useEditAccountBank = (id?: string) => {
       queryClient.invalidateQueries({ queryKey: ["accountsBank"] });
       queryClient.invalidateQueries({ queryKey: ["accountsBank", { id }] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
       toast.success("Account updated");
     },
     onError: () => {

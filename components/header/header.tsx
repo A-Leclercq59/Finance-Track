@@ -1,4 +1,5 @@
 import { UserButton } from "@/components/auth/user-button";
+import Filters from "@/components/filters";
 import { HeaderLogo } from "@/components/header/header-logo";
 import { Navigation } from "@/components/header/navigation";
 import { WelcomeMsg } from "@/components/header/welcome-msg";
@@ -15,6 +16,7 @@ export const Header = () => {
           <UserButton />
         </div>
         <WelcomeMsg />
+        <Filters />
       </div>
     </header>
   );

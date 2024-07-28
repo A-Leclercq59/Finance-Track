@@ -34,6 +34,7 @@ export const useCreateAccountBank = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accountsBank"] });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
       toast.success("Account created");
     },
     onError: (error) => {
