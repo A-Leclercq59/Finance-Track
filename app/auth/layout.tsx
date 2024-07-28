@@ -8,7 +8,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
   if (user) redirect("/");
 
   return (
-    <div className="h-full flex items-center justify-center bg-sky-500">
+    <div className="h-full flex items-center justify-center bg-gradient-to-b from-blue-700 to-blue-500">
       {children}
     </div>
   );
