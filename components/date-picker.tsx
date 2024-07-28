@@ -49,7 +49,7 @@ export const DatePicker = ({ value, onChange, disabled }: Props) => {
           {value ? format(value, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0 pointer-events-auto">
         <Calendar
           mode="single"
           defaultMonth={value}

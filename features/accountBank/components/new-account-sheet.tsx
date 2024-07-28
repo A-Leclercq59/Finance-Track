@@ -36,7 +36,7 @@ export const NewAccountSheet = () => {
         </SheetHeader>
         <AccountForm
           onSubmit={onSubmit}
-          defaultValues={{ name: "", userId: user?.id ? user.id : "" }}
+          defaultValues={{ name: "" }}
           disabled={mutation.isPending}
         />
       </SheetContent>
