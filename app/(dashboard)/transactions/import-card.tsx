@@ -71,8 +71,6 @@ const ImportCard = ({ onCancel, onSubmit, data }: Props) => {
         .filter((row) => row.length > 0),
     };
 
-    console.log({ mappedData });
-
     const arrayOfData = mappedData.body.map((row) => {
       return row.reduce((acc: any, curr, index) => {
         const header = mappedData.headers[index];
@@ -82,14 +80,12 @@ const ImportCard = ({ onCancel, onSubmit, data }: Props) => {
         return acc;
       }, {});
     });
-    console.log({ arrayOfData });
 
     const formatedData = arrayOfData.map((row) => ({
       ...row,
       amount: convertAmountToMiliunits(parseFloat(row.amount)),
       date: format(parse(row.date, dateFormat, new Date()), outputFormat),
     }));
-    console.log({ formatedData });
 
     onSubmit(formatedData);
   };
