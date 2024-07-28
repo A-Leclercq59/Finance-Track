@@ -95,23 +95,27 @@ export const GET = async (req: Request) => {
       value: number;
     };
 
-    const categories = await db.$queryRaw<CategoryResult[]>`
-      SELECT
-        c.name,
-        SUM(ABS(t.amount)) AS value
-      FROM "Transaction" t
-      INNER JOIN "AccountBank" a ON t."accountBankId" = a.id
-      INNER JOIN "Categorie" c ON t."categorieId" = c.id
-      WHERE a."userId" = ${userId}
-        AND t.date >= ${startDate}
-        AND t.date <= ${endDate}
-        AND t.amount < 0
-        ${
-          accountBankId ? Prisma.sql`AND a.id = ${accountBankId}` : Prisma.empty
-        }
-      GROUP BY c.name
-      ORDER BY value DESC
-    `;
+    const categoryResults = await db.$queryRaw<any[]>`
+  SELECT
+    c.name,
+    SUM(ABS(t.amount)) AS value
+  FROM "Transaction" t
+  INNER JOIN "AccountBank" a ON t."accountBankId" = a.id
+  INNER JOIN "Categorie" c ON t."categorieId" = c.id
+  WHERE a."userId" = ${userId}
+    AND t.amount < 0
+    AND t.date >= ${startDate}
+    AND t.date <= ${endDate}
+    ${accountBankId ? Prisma.sql`AND a.id = ${accountBankId}` : Prisma.empty}
+  GROUP BY c.name
+  ORDER BY SUM(ABS(t.amount)) DESC;
+`;
+
+    // Convert BigInt values to numbers
+    const categories: CategoryResult[] = categoryResults.map((result) => ({
+      name: result.name,
+      value: Number(result.value),
+    }));
 
     const topCategories = categories.slice(0, 3);
     const otherCategories = categories.slice(3);
