@@ -1,10 +1,12 @@
 "use client";
 
-import { useGetAccountsBank } from "@/features/accountBank/api/use-get-accounts";
-import useGetSummary from "@/features/summary/api/use-get-summary";
 import { AccountBank } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
+import { useEffect } from "react";
+
+import { useGetAccountsBank } from "@/features/accountBank/api/use-get-accounts";
+import useGetSummary from "@/features/summary/api/use-get-summary";
 import {
   Select,
   SelectContent,
@@ -34,6 +36,10 @@ const AccountFilter = () => {
     );
     router.push(`${pathname}?${query}`);
   };
+
+  useEffect(() => {
+    refetch();
+  }, [accountBankId, from, to, refetch]);
 
   return (
     <Select
