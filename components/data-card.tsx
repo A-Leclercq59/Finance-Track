@@ -71,7 +71,12 @@ export const DataCard = ({
         </div>
       </CardHeader>
       <CardContent>
-        <h1 className="font-bold text-2xl mb-2 line-clamp-1 break-all">
+        <h1
+          className={cn(
+            "font-bold text-2xl mb-2 line-clamp-1 break-all",
+            percentChange < 0 && "text-3xl"
+          )}
+        >
           <CountUp
             start={0}
             end={value}
@@ -81,15 +86,17 @@ export const DataCard = ({
             formattingFn={formatCurrency}
           />
         </h1>
-        <p
-          className={cn(
-            "text-muted-foreground text-sm line-clamp-1",
-            percentChange > 0 ? "text-emerald-500" : "text-rose-500"
-          )}
-        >
-          {formatPercentage(percentChange, { addPrefix: true })} from last
-          period
-        </p>
+        {percentChange >= 0 && (
+          <p
+            className={cn(
+              "text-muted-foreground text-sm line-clamp-1",
+              percentChange > 0 ? "text-emerald-500" : "text-rose-500"
+            )}
+          >
+            {formatPercentage(percentChange, { addPrefix: true })} from last
+            period
+          </p>
+        )}
       </CardContent>
     </Card>
   );

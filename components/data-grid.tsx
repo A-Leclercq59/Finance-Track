@@ -32,10 +32,10 @@ const DataGrid = () => {
       <DataCard
         title="Remaining"
         value={data?.remainingAmount}
-        percentChange={data?.remainingChange}
+        percentChange={-1}
         icon={FaPiggyBank}
         variant="default"
-        dateRange={dateRangeLabel}
+        dateRange=""
       />
       <DataCard
         title="Income"

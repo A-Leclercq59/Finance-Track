@@ -66,10 +66,19 @@ export const GET = async (req: Request) => {
         }
     `;
 
+    const result1 = await db.$queryRaw<FinancialDataResult[]>`
+SELECT
+  SUM(t.amount) AS remaining
+FROM "Transaction" t
+INNER JOIN "AccountBank" a ON t."accountBankId" = a.id
+WHERE a."userId" = ${userId}
+  ${accountBankId ? Prisma.sql`AND a.id = ${accountBankId}` : Prisma.empty}
+`;
+
     return {
       income: result[0].income ? Number(result[0].income) : 0,
       expenses: result[0].expenses ? Number(result[0].expenses) : 0,
-      remaining: result[0].remaining ? Number(result[0].remaining) : 0,
+      remaining: result1[0].remaining ? Number(result1[0].remaining) : 0,
     };
   }
 
