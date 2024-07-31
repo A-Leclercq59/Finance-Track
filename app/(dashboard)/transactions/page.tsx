@@ -14,7 +14,7 @@ import {
   useBulkDeleteTransactions,
   useGetTransactions,
 } from "@/features/transaction/api";
-import { useNewTransaction } from "@/features/transaction/hooks";
+import { useNewTransaction, useNewWire } from "@/features/transaction/hooks";
 
 import { Transaction } from "@prisma/client";
 import { columns } from "./columns";
@@ -64,6 +64,7 @@ const TransactionsPage = () => {
   };
 
   const newTransaction = useNewTransaction();
+  const newWire = useNewWire();
   const bulkCreateTransaction = useBulkCreateTransactions();
   const deleteTransaction = useBulkDeleteTransactions();
   const transactionsQuery = useGetTransactions();
@@ -107,6 +108,14 @@ const TransactionsPage = () => {
             Transactions History
           </CardTitle>
           <div className="flex flex-col lg:flex-row items-center gap-x-2 gap-y-2">
+            <Button
+              size={"sm"}
+              onClick={newWire.onOpen}
+              className="w-full lg:w-auto"
+            >
+              <Plus className="mr-2 size-4" />
+              Add new wire
+            </Button>
             <Button
               size={"sm"}
               onClick={newTransaction.onOpen}

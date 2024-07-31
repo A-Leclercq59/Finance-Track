@@ -58,3 +58,17 @@ export const BulkCreateTransactionSchema = z.array(CreateTransactionSchema);
 export type BulkCreateTransactionSchemaType = z.infer<
   typeof BulkCreateTransactionSchema
 >;
+
+export const CreateWireTransferSchema = z.object({
+  amount: z.number(),
+  payee: z.string(),
+  notes: z.string().optional(),
+  date: z.coerce.date(),
+  accountBankSourceId: z.string(),
+  accountBankTargetId: z.string(),
+  categorieId: z.string().optional(),
+});
+
+export type CreateWireTransferSchemaType = z.infer<
+  typeof CreateWireTransferSchema
+>;
